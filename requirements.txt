@@ -3,3 +3,4 @@ optax
 transformers
 datasets
 typing_extensions
+wandb

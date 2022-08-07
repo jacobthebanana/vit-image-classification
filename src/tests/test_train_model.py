@@ -10,7 +10,7 @@ from transformers import FlaxViTForImageClassification
 from ..config import DataConfig, ModelConfig, PipelineConfig
 from ..data.make_dataset import apply_feature_extraction, create_raw_dataset
 from ..models.train_model import (
-    get_train_dataloader,
+    get_dataloader,
     _train_step,
     ModelParams,
     ShardedModelParams,
@@ -24,7 +24,7 @@ test_model_name = "google/vit-base-patch16-224"
 class DataLoaderTest(unittest.TestCase):
     def setUp(self):
         self.data_args = DataConfig(raw_image_path=test_image_path)
-        self.model_args = ModelConfig(model_name=test_model_name)
+        self.model_args = ModelConfig(base_model_name=test_model_name)
         self.pipeline_args = PipelineConfig(train_per_device_batch_size=2)
 
         raw_dataset = create_raw_dataset(self.data_args)
@@ -34,7 +34,11 @@ class DataLoaderTest(unittest.TestCase):
 
     def test_dataloader_output(self):
         train_dataset = self.processed_dataset["train"]
-        train_dataloader = get_train_dataloader(train_dataset, self.pipeline_args)
+        train_dataloader = get_dataloader(
+            train_dataset,
+            per_device_batch_size=self.pipeline_args.train_per_device_batch_size,
+            prng_key=self.pipeline_args.train_dataloader_prng_key,
+        )
 
         actual_batch_size = (
             self.pipeline_args.train_per_device_batch_size * jax.device_count()
@@ -64,7 +68,7 @@ class StepTrainingLoop(unittest.TestCase):
 
     def setUp(self):
         self.data_args = DataConfig(raw_image_path=test_image_path)
-        self.model_args = ModelConfig(model_name=test_model_name)
+        self.model_args = ModelConfig(base_model_name=test_model_name)
         self.pipeline_args = PipelineConfig(train_per_device_batch_size=2)
 
         raw_dataset = create_raw_dataset(self.data_args)
@@ -74,10 +78,14 @@ class StepTrainingLoop(unittest.TestCase):
 
     def test_train_step_loss_reduction(self):
         train_dataset = self.processed_dataset["train"]
-        train_dataloader = get_train_dataloader(train_dataset, self.pipeline_args)
+        train_dataloader = get_dataloader(
+            train_dataset,
+            per_device_batch_size=self.pipeline_args.train_per_device_batch_size,
+            prng_key=self.pipeline_args.train_dataloader_prng_key,
+        )
 
         model = FlaxViTForImageClassification.from_pretrained(
-            self.model_args.model_name
+            self.model_args.base_model_name
         )  # type: ignore
         model: FlaxViTForImageClassification
         model_params: ModelParams = model.params

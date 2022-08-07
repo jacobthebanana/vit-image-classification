@@ -28,6 +28,27 @@ extract_data:
 
 prepare_data: setup_data_folder download_data extract_data
 
+preprocess_data:
+	python3 -m src.data.make_dataset \
+		--raw_image_path="data/raw" \
+		--processed_dataset_path="data/processed" \
+		--train_ratio=${train_ratio} \
+		--train_ratio=${test_ratio} \
+		--base_model_name=${base_model_name}
+
+train_model:
+	python3 -m src.models.train_model \
+		--processed_dataset_path="data/processed" \
+		--base_model_name=${base_model_name} \
+		--weight_decay=${weight_decay} \
+		--learning_rate=${learning_rate} \
+		--train_per_device_batch_size=${train_per_device_batch_size} \
+		--test_per_device_batch_size=${test_per_device_batch_size} \
+		--num_epochs=${num_epochs} \
+		--train_dataloader_prng_key=${train_dataloader_prng_key} \
+		--test_every_num_steps=${test_every_num_steps}
+		
+
 setup_test_data: 
 	rm data/testing/raw/train/pos/* data/testing/raw/train/neg/*
 	FILES="$(shell ls -d data/raw/train/pos/* | head -n 10)"; cp $$FILES data/testing/raw/train/pos

@@ -13,12 +13,17 @@ class DataConfig:
 
 @dataclass
 class ModelConfig:
-    model_name: str = field(default="google/vit-base-patch16-224")
+    base_model_name: str = field(default="google/vit-base-patch16-224")
+    model_output_path_prefix: str = field(default="data/artifacts/model")
+    weight_decay: float = field(default=0.0001)
     learning_rate: float = field(default=0.001)
 
 
 @dataclass
 class PipelineConfig:
     num_proc: int = field(default=multiprocessing.cpu_count())
+    num_epochs: int = field(default=6)
     train_dataloader_prng_key: int = field(default=0)
-    train_per_device_batch_size: int = field(default=128)
+    train_per_device_batch_size: int = field(default=16)
+    test_per_device_batch_size: int = field(default=32)
+    test_every_num_steps: int = field(default=1)
