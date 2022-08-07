@@ -323,8 +323,8 @@ def main():
     sharded_optimizer_state: optax.OptState = replicate(optimizer_state)
 
     wandb.init(
-        project="zadane-photomath",
-        entity="jacobthebanana",
+        entity=pipeline_args.wandb_project,
+        project=pipeline_args.wandb_entity,
         name=datetime.datetime.now().isoformat() + "-" + gethostname(),
     )
     wandb.run.log_code(".")  # type: ignore

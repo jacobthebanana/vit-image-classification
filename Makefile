@@ -32,8 +32,7 @@ preprocess_data:
 	python3 -m src.data.make_dataset \
 		--raw_image_path="data/raw" \
 		--processed_dataset_path="data/processed" \
-		--train_ratio=${train_ratio} \
-		--train_ratio=${test_ratio} \
+		--test_ratio=${test_ratio} \
 		--base_model_name=${base_model_name}
 
 train_model:
@@ -46,8 +45,12 @@ train_model:
 		--test_per_device_batch_size=${test_per_device_batch_size} \
 		--num_epochs=${num_epochs} \
 		--train_dataloader_prng_key=${train_dataloader_prng_key} \
-		--test_every_num_steps=${test_every_num_steps}
+		--wandb_entity=${wandb_entity} \
+		--wandb_project=${wandb_project} \
+		--test_every_num_steps=${test_every_num_steps} 
 		
+
+preprocess_and_train: preprocess_data train_model
 
 setup_test_data: 
 	rm data/testing/raw/train/pos/* data/testing/raw/train/neg/*

@@ -34,9 +34,7 @@ def create_raw_dataset(data_args: DataConfig) -> DatasetDict:
     dataset: DatasetDict = load_dataset("imagefolder", data_dir=data_args.raw_image_path)  # type: ignore
     dataset_split: DatasetDict = dataset["train"].train_test_split(
         test_size=data_args.test_ratio,
-        train_size=data_args.train_ratio,
         shuffle=True,
-        stratify_by_column="label",
         seed=0,
     )
     return dataset_split

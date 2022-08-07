@@ -21,7 +21,7 @@ class CreateDatasetFromImageFolder(unittest.TestCase):
     def test_dataset_classes(self):
         train_dataset: Dataset = self.raw_dataset["train"]  # type: ignore
         self.assertEqual(
-            len(train_dataset), int((10 + 17) * self.data_args.train_ratio)
+            len(train_dataset), int((10 + 17) * (1 - self.data_args.test_ratio))
         )
 
 
@@ -34,6 +34,7 @@ class GetDatasetLabelStats(unittest.TestCase):
         train_dataset = self.raw_dataset["train"]
         stats = get_dataset_label_stats(train_dataset)
         self.assertIsNotNone(stats)
+
 
 class ExtractImageFeatures(unittest.TestCase):
     def setUp(self):
