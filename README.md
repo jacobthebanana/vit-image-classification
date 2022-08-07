@@ -10,14 +10,14 @@ Python dependencies are listed under requirements.txt.
 Thanks to JAX, the same codebase works on GPUs and TPUs with data
 parallelism enabled. 
 
-## Setup
+## Getting Started
 ### Dependencies
 Dependencies of this project are listed under `requirements.txt`.
 [Additional steps](https://github.com/google/jax#installation) 
 might be required to install the appropriate version of  `jaxlib` on your system. 
 
 ### Data 
-Arrange your data in the `imagefolder` format, as in the 
+Store your data in the `imagefolder` format, as in the 
 [HuggingFace Datasets documentation](https://huggingface.co/docs/datasets/image_load#imagefolder).
 
 ### Hyperparameters, Preprocessing, and Training
