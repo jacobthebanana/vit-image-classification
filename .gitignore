@@ -1,0 +1,6 @@
+data/
+example/
+env/
+.env
+*.pyc
+.vscode/
