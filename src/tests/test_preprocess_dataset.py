@@ -2,7 +2,11 @@ import unittest
 import datasets
 
 from ..config import DataConfig, ModelConfig, PipelineConfig
-from ..data.make_dataset import create_raw_dataset, apply_feature_extraction
+from ..data.make_dataset import (
+    create_raw_dataset,
+    apply_feature_extraction,
+    get_dataset_label_stats,
+)
 
 Dataset = datasets.arrow_dataset.Dataset
 test_image_path = "data/testing/raw/"
@@ -21,10 +25,20 @@ class CreateDatasetFromImageFolder(unittest.TestCase):
         )
 
 
+class GetDatasetLabelStats(unittest.TestCase):
+    def setUp(self):
+        self.data_args = DataConfig(raw_image_path=test_image_path)
+        self.raw_dataset = create_raw_dataset(self.data_args)
+
+    def test_get_label_stats(self):
+        train_dataset = self.raw_dataset["train"]
+        stats = get_dataset_label_stats(train_dataset)
+        self.assertIsNotNone(stats)
+
 class ExtractImageFeatures(unittest.TestCase):
     def setUp(self):
         self.data_args = DataConfig(raw_image_path=test_image_path)
-        self.model_args = ModelConfig(model_name=test_model_name)
+        self.model_args = ModelConfig(base_model_name=test_model_name)
         self.pipeline_args = PipelineConfig(num_proc=1)
         self.raw_dataset = create_raw_dataset(self.data_args)
 

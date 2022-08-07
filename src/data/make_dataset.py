@@ -1,4 +1,6 @@
 from typing import Dict, Any
+import json
+from collections import Counter
 
 import datasets
 from datasets import load_dataset
@@ -70,6 +72,23 @@ def apply_feature_extraction(
     )
 
 
+def get_dataset_label_stats(dataset: Dataset) -> Dict[int, int]:
+    """
+    Return the number of entries under each label.
+
+    Parameters
+    ----------
+    dataset: Dataset
+        A dataset split (e.g., dataset["train"]).
+
+    Returns
+    -------
+    Dict[int, int]
+        Dictionary mapping label to number of items.
+    """
+    return Counter(dataset[:]["label"])
+
+
 def main():
     arg_parser = HfArgumentParser((DataConfig, ModelConfig, PipelineConfig))
     data_args, model_args, pipeline_args = arg_parser.parse_args_into_dataclasses()
@@ -80,6 +99,12 @@ def main():
     raw_dataset = create_raw_dataset(data_args)
     processed_dataset = apply_feature_extraction(raw_dataset, model_args, pipeline_args)
     processed_dataset.save_to_disk(data_args.processed_dataset_path)
+
+    train_dataset_stats = get_dataset_label_stats(processed_dataset["train"])
+    print("Train split", json.dumps(train_dataset_stats, indent=2))
+
+    test_dataset_stats = get_dataset_label_stats(processed_dataset["test"])
+    print("Test split", json.dumps(test_dataset_stats, indent=2))
 
 
 if __name__ == "__main__":
