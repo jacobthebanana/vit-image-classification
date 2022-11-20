@@ -20,7 +20,7 @@ class ModelConfig:
 
 @dataclass
 class PipelineConfig:
-    num_proc: int = field(default=multiprocessing.cpu_count())
+    num_proc: int = field(default=1)
     num_epochs: int = field(default=6)
     train_dataloader_prng_key: int = field(default=0)
     train_per_device_batch_size: int = field(default=16)

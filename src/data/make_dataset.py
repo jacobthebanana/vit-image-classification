@@ -63,10 +63,18 @@ def apply_feature_extraction(
     )
 
     def apply_feature_extractor(batch: Dict[str, Any]) -> BatchFeature:
-        return feature_extractor(batch["image"])
+        converted_images = []
+        for image in batch["image"]:
+            converted_image = image.convert("RGB")
+            converted_images.append(converted_image)
+
+        return feature_extractor(converted_images, return_tensors="np")
 
     return raw_dataset.map(
-        apply_feature_extractor, batched=True, num_proc=pipeline_args.num_proc
+        apply_feature_extractor,
+        batched=True,
+        num_proc=pipeline_args.num_proc,
+        remove_columns=["image"],
     )
 
 
@@ -98,11 +106,6 @@ def main():
     processed_dataset = apply_feature_extraction(raw_dataset, model_args, pipeline_args)
     processed_dataset.save_to_disk(data_args.processed_dataset_path)
 
-    train_dataset_stats = get_dataset_label_stats(processed_dataset["train"])
-    print("Train split", json.dumps(train_dataset_stats, indent=2))
-
-    test_dataset_stats = get_dataset_label_stats(processed_dataset["test"])
-    print("Test split", json.dumps(test_dataset_stats, indent=2))
 
 
 if __name__ == "__main__":

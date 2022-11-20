@@ -61,7 +61,7 @@ TrainStepOutput = SingleShardTrainStepOutput
 
 def _loss_fn_single_shard(
     batch: Batch, model: FlaxViTForImageClassification, model_params: ModelParams
-) -> Tuple[float, float]:
+) -> Tuple[jnp.ndarray, jnp.ndarray]:
     """
     Loss function for a batch that was not sharded.
 

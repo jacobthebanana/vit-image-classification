@@ -4,3 +4,4 @@ env/
 *.pyc
 .vscode/
 wandb/
+data/
