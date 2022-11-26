@@ -304,8 +304,12 @@ def main():
     )
     num_test_batches = test_dataset_length // actual_test_batch_length
 
+    labels = train_dataset.features["label"].names
     model = FlaxViTForImageClassification.from_pretrained(
-        model_args.base_model_name
+        model_args.base_model_name,
+        num_labels=len(labels),
+        id2label={str(i): c for i, c in enumerate(labels)},
+        label2id={c: str(i) for i, c in enumerate(labels)},
     )  # type: ignore
     model: FlaxViTForImageClassification
     model_params: ModelParams = model.params  # type: ignore
